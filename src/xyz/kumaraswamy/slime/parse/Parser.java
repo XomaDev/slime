@@ -12,7 +12,7 @@ public class Parser {
 
         for (final String token : tokens) {
             final Object object = Help.isValue(token);
-            final Token parseToken;
+            Token parseToken = null;
 
             if (object != null) {
                 parseToken = new Token(Symbol.STRING, token);
@@ -24,11 +24,13 @@ public class Parser {
                 parseToken = new Token(Symbol.NUMBER, Double.parseDouble(token));
             } else if (token.equals(Constants.ASSIGN)) {
                 parseToken = new SimpleToken(Symbol.ASSIGNMENT);
-            } else {
+            } else if (!token.isBlank()) {
                 throw new ParseException("Invalid syntax '" + token + "'");
             }
 
-            modified.add(parseToken);
+            if (parseToken != null) {
+                modified.add(parseToken);
+            }
         }
         return modified;
     }

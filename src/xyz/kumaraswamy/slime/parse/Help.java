@@ -1,6 +1,6 @@
 package xyz.kumaraswamy.slime.parse;
 
-import static xyz.kumaraswamy.slime.Constants.QUOTES;
+import static xyz.kumaraswamy.slime.Constants.QUOTE;
 
 public class Help {
     public static Object isValue(String text) {
@@ -13,8 +13,7 @@ public class Help {
         if (ch != ch1) {
             return null;
         }
-        return QUOTES.contains(ch + "")
-                && QUOTES.contains(ch1 + "")
+        return QUOTE == ch
                 ? text.substring(1, len)
                 : null;
     }

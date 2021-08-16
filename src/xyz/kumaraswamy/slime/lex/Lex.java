@@ -22,23 +22,29 @@ public class Lex {
                     ? "" : modified.getLast();
             final int size = modified.size() - 1;
 
-            if (Constants.QUOTES.contains(charc)) {
+            if (ch == Constants.QUOTE) {
                 inside = !inside;
                 builder.append(ch);
             } else if (inside) {
                 builder.append(ch);
-            } else if (charc.isBlank() || charc.matches("[()]")) {
-                append(builder, modified);
-                append(number, modified);
+            } else if ((ch == ' ' && !previous.matches("[a-z-A-Z]+")) || charc.matches("[()]")) {
+                append(builder, number, modified);
                 if (!charc.isBlank()) {
                     modified.add(charc);
                 }
+            } else if (ch == ';') {
+              builder.setLength(0);
+              number.setLength(0);
+              inside = false;
             } else if (charc.matches("[0-9]")) {
                 if (previous.equals("-") && (size - 1) > 2
                         && modified.get(size - 1).matches("[+\\-/*]")) {
                     modified.set(size, '-' + charc);
+                } else if ((previous.startsWith("-") && previous.matches("-[0-9]+"))
+                        || previous.matches("[0-9]+")) {
+                    modified.set(size, previous + charc);
                 } else {
-                    number.append(ch);
+                    modified.add(charc);
                 }
             } else if (modified.size() != 0 && charc.matches("[a-zA-Z]")
                     && previous.matches("[a-z-A-Z]+")) {
@@ -47,18 +53,23 @@ public class Lex {
                 modified.add(charc);
             }
             if (++pos == characters.length()) {
-                append(number, modified);
+                append(builder, number, modified);
             }
         }
         return modified;
     }
 
-    private static void append(StringBuilder number, LinkedList<String> modified) {
-        final String build = number.toString();
+    private static void append(StringBuilder builder, StringBuilder number, LinkedList<String> modified) {
+        append(builder, modified);
+        append(number, modified);
+    }
+
+    private static void append(StringBuilder builder, LinkedList<String> modified) {
+        final String build = builder.toString();
         if (build.isEmpty()) {
             return;
         }
         modified.add(build);
-        number.setLength(0);
+        builder.setLength(0);
     }
 }

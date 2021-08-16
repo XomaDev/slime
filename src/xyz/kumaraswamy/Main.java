@@ -1,11 +1,19 @@
 package xyz.kumaraswamy;
 
 import xyz.kumaraswamy.slime.Interpreter;
+import xyz.kumaraswamy.slime.Space;
+
+import java.util.Scanner;
 
 public class Main {
 
     public static void main(String[] args) throws Exception {
-        final Interpreter interpreter = new Interpreter();
-        interpreter.exec("a = '1' + (1 + 2)");
+        final Space space = new Space();
+        final Interpreter interpreter = new Interpreter(space);
+        while (true) {
+            Scanner scanner = new Scanner(System.in);
+            System.out.print("»» ");
+            interpreter.exec(scanner.nextLine());
+        }
     }
 }

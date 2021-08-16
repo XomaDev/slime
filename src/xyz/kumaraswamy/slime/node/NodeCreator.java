@@ -54,25 +54,29 @@ public class NodeCreator {
             }
         }
         tokens = tokensFormatted;
-        if (tokens.size() != 0 && tokens.get(0) == (Object) Symbol.NODE) {
+        if (tokens.size() != 0 && tokens.get(0).getSymbol() == Symbol.NODE) {
             // provide least start values
             tokens.add(0, new Token(Symbol.NUMBER, 0D));
-            tokens.add(1, new Token(Symbol.SYMBOL, Constants.add));
+            tokens.add(1, new Token(Symbol.SYMBOL, new Operator("+")));
         }
-
         Object lastValObj = null;
         Operator lastEnum = null;
 
         int parenthesisI = 0;
         Node thisNode = null;
 
+        int pos = 1;
         for (Token token : tokens) {
-            final Object value = token.getValue();
+            Object value = token.getValue();
+
+            if (value == null) {
+                value = token.getSymbol();
+            }
 
             if (value instanceof Operator) {
                 lastEnum = (Operator) value;
             } else {
-                final boolean isParenNode = token.equals(Symbol.NODE);
+                final boolean isParenNode = token.getSymbol() == Symbol.NODE;
                 if (isParenNode || lastEnum != null && lastValObj != null) {
                     thisNode = new Node(lastEnum).setLeft(
                             thisNode == null ?
@@ -83,9 +87,12 @@ public class NodeCreator {
                                     ? createNode(bracketNode.get(parenthesisI++))
                                     : new SimpleNode(value)
                     );
+                } else if (pos == tokens.size() && thisNode == null) {
+                    thisNode = new SimpleNode(value);
                 }
                 lastValObj = value;
             }
+            pos++;
         }
         return thisNode;
     }
