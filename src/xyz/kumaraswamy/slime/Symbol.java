@@ -1,5 +1,5 @@
 package xyz.kumaraswamy.slime;
 
 public enum Symbol {
-    SYMBOL, ASSIGNMENT, STRING, NUMBER
+    SYMBOL, ASSIGNMENT, STRING, NUMBER, NODE
 }

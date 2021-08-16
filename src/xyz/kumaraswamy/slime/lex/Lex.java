@@ -2,7 +2,6 @@ package xyz.kumaraswamy.slime.lex;
 
 import xyz.kumaraswamy.slime.Constants;
 
-import java.util.ArrayList;
 import java.util.LinkedList;
 
 public class Lex {
@@ -28,11 +27,14 @@ public class Lex {
                 builder.append(ch);
             } else if (inside) {
                 builder.append(ch);
-            } else if (charc.isBlank()) {
+            } else if (charc.isBlank() || charc.matches("[()]")) {
                 append(builder, modified);
                 append(number, modified);
+                if (!charc.isBlank()) {
+                    modified.add(charc);
+                }
             } else if (charc.matches("[0-9]")) {
-                if (previous.equals("-") && modified.size() > 2
+                if (previous.equals("-") && (size - 1) > 2
                         && modified.get(size - 1).matches("[+\\-/*]")) {
                     modified.set(size, '-' + charc);
                 } else {
@@ -42,7 +44,6 @@ public class Lex {
                     && previous.matches("[a-z-A-Z]+")) {
                 modified.set(size, previous + charc);
             } else {
-                System.out.println("add: " + charc);
                 modified.add(charc);
             }
             if (++pos == characters.length()) {
@@ -54,10 +55,10 @@ public class Lex {
 
     private static void append(StringBuilder number, LinkedList<String> modified) {
         final String build = number.toString();
-
-        if (!build.isEmpty()) {
-            modified.add(build);
-            number.setLength(0);
+        if (build.isEmpty()) {
+            return;
         }
+        modified.add(build);
+        number.setLength(0);
     }
 }

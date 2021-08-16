@@ -6,6 +6,6 @@ public class Main {
 
     public static void main(String[] args) throws Exception {
         final Interpreter interpreter = new Interpreter();
-        interpreter.exec("abcd = '121' - -1");
+        interpreter.exec("a = '1' + (1 + 2)");
     }
 }

@@ -2,6 +2,8 @@ package xyz.kumaraswamy.slime.parse;
 
 import xyz.kumaraswamy.slime.Symbol;
 
+import java.util.Objects;
+
 public class Token {
     private final Symbol symbol;
     private final Object value;
@@ -17,6 +19,11 @@ public class Token {
 
     public Object getValue() {
         return value;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        return o instanceof Symbol && o == symbol;
     }
 
     @Override

@@ -9,6 +9,6 @@ public class SimpleToken extends Token {
 
     @Override
     public String toString() {
-        return super.getSymbol().name();
+        return '[' + super.getSymbol().name() + ']';
     }
 }

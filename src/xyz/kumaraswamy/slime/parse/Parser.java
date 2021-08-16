@@ -1,13 +1,13 @@
 package xyz.kumaraswamy.slime.parse;
 
+import xyz.kumaraswamy.slime.Constants;
 import xyz.kumaraswamy.slime.Symbol;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
 
 public class Parser {
-    public static void parse(final LinkedList<String> tokens) throws Exception {
-        System.out.println(tokens);
+    public static ArrayList<Token> parse(final LinkedList<String> tokens) throws Exception {
         final ArrayList<Token> modified = new ArrayList<>();
 
         for (final String token : tokens) {
@@ -16,11 +16,13 @@ public class Parser {
 
             if (object != null) {
                 parseToken = new Token(Symbol.STRING, token);
-            } else if (token.matches("[a-zA-Z]+|[+\\-/*]")) {
+            } else if (token.matches("[a-zA-Z]+|[()]")) {
                 parseToken = new Token(Symbol.SYMBOL, token);
+            } else if (token.matches("[+\\-/*]")) {
+                parseToken = new Token(Symbol.SYMBOL, new Operator(token));
             } else if (token.matches("[-0-9]+")) {
                 parseToken = new Token(Symbol.NUMBER, Double.parseDouble(token));
-            } else if (token.equals("=")) {
+            } else if (token.equals(Constants.ASSIGN)) {
                 parseToken = new SimpleToken(Symbol.ASSIGNMENT);
             } else {
                 throw new ParseException("Invalid syntax '" + token + "'");
@@ -28,7 +30,7 @@ public class Parser {
 
             modified.add(parseToken);
         }
-        System.out.println(modified);
+        return modified;
     }
 }
 
