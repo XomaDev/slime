@@ -58,7 +58,7 @@ public class NodeReader {
                 switch (thisNode.getValue() + "") {
                     case "+":
                         result = isDouble(result, right)
-                                ? (double) result + (double) right
+                                ? number(result) + number(right)
                                 : result + "" + format(right);
                         break;
                     case "-":
@@ -82,6 +82,10 @@ public class NodeReader {
             return new DecimalFormat("###.#").format(num);
         }
         return String.valueOf(num);
+    }
+
+    private double number(Object number) {
+        return Double.parseDouble(number.toString());
     }
 
     private boolean isDouble(Object obj, Object obj1) {

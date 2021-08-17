@@ -17,7 +17,8 @@ public class Lex {
 
         int pos = 0;
         for (char ch : characters.toCharArray()) {
-            final String charc = ch + "";
+            final String character = ch + "";
+
             final String previous = modified.size() == 0
                     ? "" : modified.getLast();
             final int size = modified.size() - 1;
@@ -27,30 +28,29 @@ public class Lex {
                 builder.append(ch);
             } else if (inside) {
                 builder.append(ch);
-            } else if ((ch == ' ' && !previous.matches("[a-z-A-Z]+")) || charc.matches("[()]")) {
+            } else if ((ch == ' ' && !previous.matches("[a-z-A-Z]+")) || character.matches("[()]")) {
                 append(builder, number, modified);
-                if (!charc.isBlank()) {
-                    modified.add(charc);
+                if (!character.isBlank()) {
+                    modified.add(character);
                 }
             } else if (ch == ';') {
               builder.setLength(0);
               number.setLength(0);
-              inside = false;
-            } else if (charc.matches("[0-9]")) {
+            } else if (character.matches("[0-9]")) {
                 if (previous.equals("-") && (size - 1) > 2
                         && modified.get(size - 1).matches("[+\\-/*]")) {
-                    modified.set(size, '-' + charc);
+                    modified.set(size, '-' + character);
                 } else if ((previous.startsWith("-") && previous.matches("-[0-9]+"))
                         || previous.matches("[0-9]+")) {
-                    modified.set(size, previous + charc);
+                    modified.set(size, previous + character);
                 } else {
-                    modified.add(charc);
+                    modified.add(character);
                 }
-            } else if (modified.size() != 0 && charc.matches("[a-zA-Z]")
+            } else if (modified.size() != 0 && character.matches("[a-zA-Z]")
                     && previous.matches("[a-z-A-Z]+")) {
-                modified.set(size, previous + charc);
+                modified.set(size, previous + character);
             } else {
-                modified.add(charc);
+                modified.add(character);
             }
             if (++pos == characters.length()) {
                 append(builder, number, modified);
