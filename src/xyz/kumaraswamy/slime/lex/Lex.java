@@ -1,6 +1,8 @@
 package xyz.kumaraswamy.slime.lex;
 import java.util.LinkedList;
 
+import static xyz.kumaraswamy.slime.parse.Parser.isNumber;
+
 public class Lex {
     // Quotes
     private final StringBuilder builder = new StringBuilder();
@@ -40,7 +42,7 @@ public class Lex {
             } else if (isDigit(ch)) {
                 final int post = size - 1;
                 final boolean isPreviousNumber = previous.matches("-[0-9]+");
-                final boolean isFloat = previous.charAt(previous.length() - 1) == '.';
+                final boolean isFloat = previous.contains(".") && isNumber(previous);
 
                 if (previous.equals("-") && post > 2
                         && modified.get(size - 1).matches("[+\\-/*]")) {
@@ -69,6 +71,7 @@ public class Lex {
                 append();
             }
         }
+        System.out.println(modified);
         return modified;
     }
 

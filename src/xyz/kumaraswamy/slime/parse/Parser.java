@@ -35,7 +35,7 @@ public class Parser {
         return modified;
     }
 
-    private static boolean isNumber(String token) {
+    public static boolean isNumber(String token) {
         try {
             Double.parseDouble(token);
             return true;
