@@ -42,7 +42,7 @@ public class Lex {
             } else if (isDigit(ch)) {
                 final int post = size - 1;
                 final boolean isPreviousNumber = previous.matches("-[0-9]+");
-                final boolean isFloat = previous.contains(".") && isNumber(previous);
+                final boolean isFloat = previous.contains(".") && isNumber(previous) || previous.equals("-");
 
                 if (previous.equals("-") && post > 2
                         && modified.get(size - 1).matches("[+\\-/*]")) {
@@ -71,7 +71,6 @@ public class Lex {
                 append();
             }
         }
-        System.out.println(modified);
         return modified;
     }
 
