@@ -20,7 +20,7 @@ public class Parser {
                 parseToken = new Token(Symbol.SYMBOL, token);
             } else if (token.matches("[+\\-/*]")) {
                 parseToken = new Token(Symbol.SYMBOL, new Operator(token));
-            } else if (token.matches("[-0-9]+")) {
+            } else if (isNumber(token)) {
                 parseToken = new Token(Symbol.NUMBER, Double.parseDouble(token));
             } else if (token.equals(Constants.ASSIGN)) {
                 parseToken = new SimpleToken(Symbol.ASSIGNMENT);
@@ -33,6 +33,15 @@ public class Parser {
             }
         }
         return modified;
+    }
+
+    private static boolean isNumber(String token) {
+        try {
+            Double.parseDouble(token);
+            return true;
+        } catch (NumberFormatException ignored) {
+            return false;
+        }
     }
 }
 
