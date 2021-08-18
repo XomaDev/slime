@@ -55,22 +55,15 @@ public class NodeReader {
                 if (result == null) {
                     throw new NullPointerException();
                 }
-                switch (thisNode.getValue() + "") {
-                    case "+":
-                        result = isDouble(result, right)
-                                ? number(result) + number(right)
-                                : result + "" + format(right);
-                        break;
-                    case "-":
-                        result = (double) result - (double) right;
-                        break;
-                    case "*":
-                        result = (double) result * (double) right;
-                        break;
-                    case "/":
-                        result = (double) result / (double) right;
-                        break;
-                }
+                result = switch (thisNode.getValue() + "") {
+                    case "+" -> isDouble(result, right)
+                            ? number(result) + number(right)
+                            : result + "" + format(right);
+                    case "-" -> (double) result - (double) right;
+                    case "*" -> (double) result * (double) right;
+                    case "/" -> (double) result / (double) right;
+                    default -> result;
+                };
             }
         }
 

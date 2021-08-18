@@ -20,10 +20,14 @@ public class NodeCreator {
 
         int openBraces = 0, index = 1, i = 0;
         for (Token o: tokens) {
-            if (o.getValue().equals(Constants.leftOperator)
+            final Object value = o.getValue();
+            if (value == null) {
+                continue;
+            }
+            if (value.equals(Constants.leftOperator)
                     && ++openBraces == 1) {
                 indexL.add(index);
-            } else if (o.getValue().equals(Constants.rightOperator)
+            } else if (value.equals(Constants.rightOperator)
                     && --openBraces == 0) {
 
                 indexR.add(index);
@@ -55,7 +59,7 @@ public class NodeCreator {
         }
         tokens = tokensFormatted;
         if (tokens.size() != 0 && tokens.get(0).getSymbol() == Symbol.NODE) {
-            // provide least start values
+            // provide the least start values
             tokens.add(0, new Token(Symbol.NUMBER, 0D));
             tokens.add(1, new Token(Symbol.SYMBOL, new Operator("+")));
         }
