@@ -58,9 +58,10 @@ public class NodeCreator {
             }
         }
         tokens = tokensFormatted;
+        System.out.println(tokensFormatted);
         if (tokens.size() != 0 && tokens.get(0).getSymbol() == Symbol.NODE) {
             // provide the least start values
-            tokens.add(0, new Token(Symbol.NUMBER, 0D));
+            tokens.add(0, new Token(Symbol.STRING, "''"));
             tokens.add(1, new Token(Symbol.SYMBOL, new Operator("+")));
         }
         Object lastValObj = null;
