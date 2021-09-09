@@ -103,7 +103,7 @@ Declare a constructor as passing your own SlimeMethods instance as the second pa
 final Space space = new Space();
 final Slime slime = new Slime(space, new MyMethods());
 ```
-
+<hr>
 This was made to learn.
 <br>
 Feel free to fork and contribute back 🙂
