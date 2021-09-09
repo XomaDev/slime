@@ -77,7 +77,7 @@ For that, you will need to create a class that extends `SlimeMethods`
 and do change accordingly, an example:
 
 ```java
-public class MyMethods extends SlimeMethods {
+class MyMethods extends SlimeMethods {
     private final StringJoiner joiner = new StringJoiner("\n");
 
     @Override
