@@ -74,7 +74,7 @@ You will have to request the interpreter line by line.
 You can also declare your methods!<br>
 
 For that, you will need to create a class that extends `SlimeMethods`
-and do change accordingly, an example:
+and then do change accordingly, an example:
 
 ```java
 class MyMethods extends SlimeMethods {
