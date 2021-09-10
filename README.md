@@ -43,6 +43,8 @@ The variable can be a number or a string.
 // example inputs
 
 a = 70 + (10 + 20)
+        
+print a is 100 // true
 a = 'The number is ' + a
 ```
 
@@ -63,7 +65,7 @@ print .1 + 2
 
 ### Basic Operators
 
-Slime can understand `+`, `-`, `/` and `*` math operators including `braces`.
+Slime can understand `+`, `-`, `/` and `*` math operators, `is` and `or` boolean operator including `braces`.
 
 You will have to request the interpreter line by line.
 
