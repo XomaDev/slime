@@ -31,6 +31,8 @@ public class Main {
             }
         });
 
+        slime.define("pie", valueOf(Math.PI));
+
         while (true) {
             System.out.print("»» ");
             final String text = scanner.nextLine();

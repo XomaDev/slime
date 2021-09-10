@@ -93,6 +93,16 @@ final Slime slime = new Slime(space, new MyMethods());
 
 <hr>
 
+### Define
+
+You can also define variable with your own values with slime, you just need to call `define(name, expression)`
+
+```java
+slime.define("pie", valueOf(Math.PI));
+```
+
+<hr>
+
 ### Dynamic operators
 
 You can also add a dynamic operator, doing additional things!<br>

@@ -8,7 +8,6 @@ import xyz.kumaraswamy.slime.parse.Parse;
 import xyz.kumaraswamy.slime.parse.Token;
 
 import java.lang.reflect.Method;
-import java.util.Arrays;
 import java.util.HashMap;
 
 @SuppressWarnings("unused")
@@ -50,24 +49,28 @@ public class Slime {
         return check.equals("=") || operators.containsKey(check);
     }
 
-    public void exec(final String text) throws Exception {
-        final String[] lexed = new Lex(text, this).lex();
+    public void define(final String name, final String value) throws Exception {
+        final Object[] results = processObjects(value);
 
-        if (lexed.length == 0) {
+        if (results == null)
             return;
+
+        if (results[1] != null) {
+            throw new Exception("Cannot be a method call or value assign statement");
         }
 
-        final Token[] tokens = Parse.parse(lexed, this);
+        final Object result = processor.process((Node) results[0]);
+        if (result == null)
+            return;
 
-        if (methods == null) {
-            methods = new SlimeMethods();
-        }
+        space.add(name, result);
+    }
 
-        final Object[] results = (Object[]) NodeCreator.createNode(
-                tokens, true, methods);
+    public void exec(final String text) throws Exception {
+        final Object[] results = processObjects(text);
 
-        if (processor == null) {
-            processor = new Processor(space, operators);
+        if (results == null) {
+            return;
         }
 
         final Object result = processor.process((Node) results[0]);
@@ -91,6 +94,28 @@ public class Slime {
             return;
         }
         throw new Exception("Invalid syntax provided");
+    }
+
+    private Object[] processObjects(String text) throws Exception {
+        final String[] lexed = new Lex(text, this).lex();
+
+        if (lexed.length == 0) {
+            return null;
+        }
+
+        final Token[] tokens = Parse.parse(lexed, this);
+
+        if (methods == null) {
+            methods = new SlimeMethods();
+        }
+
+        final Object[] results = (Object[]) NodeCreator.createNode(
+                tokens, true, methods);
+
+        if (processor == null) {
+            processor = new Processor(space, operators);
+        }
+        return results;
     }
 
     private void invoke(final String name, final Object result) throws Exception {
