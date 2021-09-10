@@ -103,6 +103,28 @@ Declare a constructor as passing your own SlimeMethods instance as the second pa
 final Space space = new Space();
 final Slime slime = new Slime(space, new MyMethods());
 ```
+
+<hr>
+
+### Dynamic operators
+
+You can also add a dynamic operator, doing additional things!<br>
+For that you have to call `setOperator` on `Slime` and pass an operator and the operator handler. This will call the `handle(Object, Object)` method.<br>
+You have to perform any operator and return the result.
+
+```java
+// Dynamically adding a boolean operator `<?> is <?>`
+slime.setOperator("is", new Operator() {
+            @Override
+            public Object handle(Object first, Object second) {
+                // checks and returns if first == second
+                return Objects.equals(valueOf(first), valueOf(second));
+            }
+        });
+
+slime.exec("a = (70 + (10 + 20)) is 100")
+slime.exec("print a"); // prints true
+```
 <hr>
 This was made to learn.
 <br>

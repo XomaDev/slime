@@ -1,14 +1,21 @@
 package xyz.kumaraswamy.slime;
 
+import xyz.kumaraswamy.slime.operators.Operator;
 import xyz.kumaraswamy.slime.node.Node;
 
-import java.text.DecimalFormat;
+import java.util.HashMap;
+
+import static java.lang.Double.parseDouble;
+import static java.lang.String.valueOf;
 
 public class Processor {
-    private final Space space;
 
-    public Processor(final Space space) {
+    private final Space space;
+    private final HashMap<String, Operator> operators;
+
+    public Processor(final Space space, final HashMap<String, Operator> operators) {
         this.space = space;
+        this.operators = operators;
     }
 
     public Object process(final Node node) throws Exception {
@@ -58,12 +65,12 @@ public class Processor {
             // the parm node to process with
             // the min (first) right node
 
-            Node node1 = node;
+            Node lastLeftNode = node;
             while (count++ < i) {
-                node1 = node1.getLeft();
+                lastLeftNode = lastLeftNode.getLeft();
             }
 
-            final Node rightNode = node1.getRight();
+            final Node rightNode = lastLeftNode.getRight();
 
             if (rightNode == null) {
                 continue;
@@ -79,41 +86,31 @@ public class Processor {
                 throw new NullPointerException();
             }
 
-            result = switch (node1.getValue() + "") {
-                case "+" -> isDouble(result, right)
-                        ? number(result) + number(right)
-                        : result + "" + format(right);
-                case "-" -> (double) result - (double) right;
-                case "*" -> (double) result * (double) right;
-                case "/" -> (double) result / (double) right;
-                default -> result;
-            };
+            // operator to work with
+            final String type = lastLeftNode.getValue() + "";
+            final Operator operator = operators.get(type);
+
+            if (operator == null) {
+                throw new Exception("Cannot find unknown operator '" + type + "'");
+            }
+            result = operator.handle(result, right);
         }
         return result;
     }
 
-    private String format(Object num) {
-        if (num instanceof Double) {
-            return new DecimalFormat("###.#").format(num);
-        }
-        return String.valueOf(num);
-    }
-
-    private double number(Object number) {
-        return Double.parseDouble(String.valueOf(number));
-    }
-
-    private boolean isDouble(Object obj, Object obj1) {
-        if (obj instanceof Double
-                && obj1 instanceof Double) {
+    public static boolean areNums(Object first, Object second) {
+        if (first instanceof Double
+                && second instanceof Double) {
             return true;
         }
         try {
-            Double.parseDouble(obj.toString());
-            Double.parseDouble(obj1.toString());
-            return true;
+            // try parsing the two objects to number
+            parseDouble(valueOf(first));
+            parseDouble(valueOf(second));
         } catch (NumberFormatException ignored) {
+            // just ignore the exception
             return false;
         }
+        return true;
     }
 }

@@ -1,5 +1,9 @@
 package xyz.kumaraswamy.slime;
 
+import java.text.DecimalFormat;
+
+import static java.lang.String.valueOf;
+
 public class Help {
     public static Object isValue(final String text) {
         if (text.length() < 2) {
@@ -14,5 +18,12 @@ public class Help {
         return '\'' == ch
                 ? text.substring(1, len)
                 : null;
+    }
+
+    public static String format(Object num) {
+        if (num instanceof Double) {
+            return new DecimalFormat("###.#").format(num);
+        }
+        return valueOf(num);
     }
 }

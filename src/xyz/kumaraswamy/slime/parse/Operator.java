@@ -11,10 +11,6 @@ public class Operator {
         hashCode = Objects.hash(operator);
     }
 
-    public String getOperator() {
-        return operator;
-    }
-
     @Override
     public String toString() {
         return operator;

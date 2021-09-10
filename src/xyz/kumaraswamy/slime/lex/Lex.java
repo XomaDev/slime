@@ -1,29 +1,28 @@
 package xyz.kumaraswamy.slime.lex;
 
-import xyz.kumaraswamy.slime.Extra;
+import xyz.kumaraswamy.slime.Slime;
 
-import java.io.IOException;
 import java.util.LinkedList;
 
 public class Lex {
-    private final Object data;
+    private final String data;
+    private final Slime slime;
 
     private final LinkedList<String> tokens = new LinkedList<>();
 
     private final StringBuilder builder = new StringBuilder();
     private final StringBuilder number = new StringBuilder();
 
-    public Lex(final String text) {
+    public Lex(final String text, Slime slime) {
         data = text;
+        this.slime = slime;
     }
 
-    public String[] lex() throws IOException {
-        final String text = new String(Extra.read(data));
-
+    public String[] lex() {
         boolean inside = false;
 
         int pos = 0;
-        for (char ch : text.toCharArray()) {
+        for (char ch : data.toCharArray()) {
             final String previous = tokens.size() == 0
                     ? "" : tokens.getLast();
             final int size = tokens.size() - 1;
@@ -39,10 +38,10 @@ public class Lex {
                     tokens.add(ch + "");
                 }
             } else if (isDigit(ch)) {
-                if (previous.equals("-") && isOperator(size == 0
+                if (previous.equals("-") && slime.isOperator(size == 0
                         ? "" : tokens.get(size - 1))) {
                     tokens.set(size, "-" + ch);
-                } else if (isDigits(previous)) {
+                } else if (isDigits(previous) && size != -1) {
                     String append = previous + ch;
                     if (append.startsWith(".")) {
                         append = '0' + append;
@@ -53,7 +52,7 @@ public class Lex {
                 }
             } else {
                 appendTokens();
-                if (pos > 0 && text.charAt(pos - 1) == ' ') {
+                if (pos > 0 && data.charAt(pos - 1) == ' ') {
                     tokens.add(ch + "");
                 } else if (isLetter(ch) && alphabets(previous)) {
                     tokens.set(size, previous + ch);
@@ -83,18 +82,6 @@ public class Lex {
             }
         }
         return true;
-    }
-
-    public static boolean isOperator(String text) {
-        if (text.length() != 1) {
-            return false;
-        }
-        final char ch = text.charAt(0);
-        return ch == '=' || isBlock(ch) || isOperator(ch);
-    }
-
-    private static boolean isOperator(char ch) {
-        return ch == '+' || ch == '-' || ch == '/' || ch == '*';
     }
 
     public static boolean alphabets(final String text) {
