@@ -30,6 +30,8 @@ public class Data {
         return false;
     }
 
+    // Initialize the Map with the default operators
+
     public static final HashMap<String, xyz.kumaraswamy.slime.operators.Operator> operators = new HashMap<>();
 
     static {
@@ -38,12 +40,15 @@ public class Data {
                 new Object[] {"-", new Subtract()},
                 new Object[] {"/", new Divide()},
                 new Object[] {"*", new Multiply()},
+
                 new Object[] {"^", new Power()},
+
                 new Object[] {"is", new Is()},
                 new Object[] {"or", new Or()}
         };
 
         for (Object[] operator : operatorMaps) {
+            // put them to the Map
             operators.put((String) operator[0],
                     (xyz.kumaraswamy.slime.operators.Operator) operator[1]);
         }
