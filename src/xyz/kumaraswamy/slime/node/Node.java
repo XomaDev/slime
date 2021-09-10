@@ -1,5 +1,11 @@
 package xyz.kumaraswamy.slime.node;
 
+/**
+ * A class that holds itself to form
+ * a node tree that will be created by the
+ * @link NodeCreator.class
+ */
+
 public class Node {
     private final Object value;
     private Node left, right;

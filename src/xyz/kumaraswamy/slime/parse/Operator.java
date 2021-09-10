@@ -2,6 +2,13 @@ package xyz.kumaraswamy.slime.parse;
 
 import java.util.Objects;
 
+/**
+ * Class for the arithmetic and
+ * dynamically added operators
+ *
+ * A class to identify if a value is an operator
+ */
+
 public class Operator {
     private final String operator;
     private final int hashCode;

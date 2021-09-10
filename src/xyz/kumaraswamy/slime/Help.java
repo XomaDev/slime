@@ -5,6 +5,12 @@ import java.text.DecimalFormat;
 import static java.lang.String.valueOf;
 
 public class Help {
+
+    /**
+     * Checks if the @parm text is a string value
+     * values are quoted by `'` at the beginning and the end
+     */
+
     public static Object isValue(final String text) {
         if (text.length() < 2) {
             return null;
@@ -19,6 +25,11 @@ public class Help {
                 ? text.substring(1, len)
                 : null;
     }
+
+    /**
+     * Formats the Double to a decimal or
+     * no decimal point values
+     */
 
     public static String format(Object num) {
         if (num instanceof Double) {

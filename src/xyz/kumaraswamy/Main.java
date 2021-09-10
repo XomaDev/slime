@@ -1,13 +1,11 @@
 package xyz.kumaraswamy;
 
-import xyz.kumaraswamy.slime.operators.Operator;
 import xyz.kumaraswamy.slime.Slime;
 import xyz.kumaraswamy.slime.Space;
+import xyz.kumaraswamy.slime.operators.Is;
+import xyz.kumaraswamy.slime.operators.Operator;
 
-import java.util.Objects;
 import java.util.Scanner;
-
-import static java.lang.String.valueOf;
 
 @SuppressWarnings("InfiniteLoopStatement")
 public class Main {
@@ -16,22 +14,12 @@ public class Main {
         final Scanner scanner = new Scanner(System.in);
         final Slime slime = new Slime(new Space());
 
-        slime.setOperator("is", new Operator() {
+        slime.setOperator("?", new Operator() {
             @Override
             public Object handle(Object first, Object second) {
-                return Objects.equals(valueOf(first), valueOf(second));
+                return new Is().handle(first, second);
             }
         });
-
-        slime.setOperator("or", new Operator() {
-            @Override
-            public Object handle(Object first, Object second) {
-                return valueOf(first).equals("true")
-                        || valueOf(second).equals("true");
-            }
-        });
-
-        slime.define("pie", valueOf(Math.PI));
 
         while (true) {
             System.out.print("»» ");

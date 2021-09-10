@@ -4,8 +4,13 @@ import xyz.kumaraswamy.slime.Help;
 import xyz.kumaraswamy.slime.Slime;
 import xyz.kumaraswamy.slime.lex.Lex;
 
-public class Parse {
+/**
+ * A class the takes in the Tokens
+ * provided by the lexer and marks values
+ * accordingly to help while processing
+ */
 
+public class Parse {
     public static Token[] parse(final String[] tokens, Slime slime) throws Exception {
         final Token[] modified = new Token[tokens.length];
 
@@ -31,6 +36,10 @@ public class Parse {
         }
         return modified;
     }
+
+    /**
+     * Check if @parm token is a bracket (block)
+     */
 
     private static boolean isBlock(final String token) {
         if (token.length() != 1) {

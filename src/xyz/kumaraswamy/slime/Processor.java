@@ -11,6 +11,10 @@ import static java.lang.String.valueOf;
 public class Processor {
 
     private final Space space;
+
+    // externally added and pre added
+    // operators are declared here
+
     private final HashMap<String, Operator> operators;
 
     public Processor(final Space space, final HashMap<String, Operator> operators) {
@@ -18,7 +22,14 @@ public class Processor {
         this.operators = operators;
     }
 
+    /**
+     * Process the node tree and returns the result
+     * @param node Node tree to process
+     * @throws Exception Something went wrong while processing
+     */
+
     public Object process(final Node node) throws Exception {
+
         if (node == null) {
             return null;
         }
@@ -70,6 +81,9 @@ public class Processor {
                 lastLeftNode = lastLeftNode.getLeft();
             }
 
+            // the right node to operator
+            // with the left node
+
             final Node rightNode = lastLeftNode.getRight();
 
             if (rightNode == null) {
@@ -87,16 +101,29 @@ public class Processor {
             }
 
             // operator to work with
+
             final String type = lastLeftNode.getValue() + "";
             final Operator operator = operators.get(type);
+
+            // if operator is null, the operator
+            // cannot be found
 
             if (operator == null) {
                 throw new Exception("Cannot find unknown operator '" + type + "'");
             }
+
+            // calls the handle(Object, Object) method on
+            // the extended class of operators/Operator.class
+
             result = operator.handle(result, right);
         }
         return result;
     }
+
+    /**
+     * Checks if two numbers can be used as numbers
+     * this is used to auto cast objects
+     */
 
     public static boolean areNums(Object first, Object second) {
         if (first instanceof Double

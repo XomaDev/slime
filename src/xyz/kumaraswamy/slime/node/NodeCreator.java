@@ -13,10 +13,33 @@ import xyz.kumaraswamy.slime.parse.Token;
 import static java.lang.String.valueOf;
 import static xyz.kumaraswamy.slime.Data.isMethod;
 
+/**
+ * Takes in the tokens and creates a node tree
+ * that will be Processed by the Processor.class
+ */
+
 public class NodeCreator {
+
+    /**
+     * Creates a node tree and returns the initializers
+     * (values before expression)
+     * @param separators To return just a node or
+     *                   with to initialize
+     * @param methods To check if a statement is a
+     *                value method call
+     * @return Node tree (with initializers)
+     */
+
     public static Object createNode(Token[] tokens, boolean separators, SlimeMethods methods) throws Exception {
+        // marks the indexes for the sub expressions (blocks)
+
         final ArrayList<Integer> indexL = new ArrayList<>(),
                 indexR = new ArrayList<>();
+
+        // store the sub expressions (blocks)
+        // the program will itself recall to create a
+        // sub node tree
+
         final ArrayList<ArrayList<Token>> blocks = new ArrayList<>();
 
         int openBraces = 0, index = 1, i = 0;
@@ -35,6 +58,11 @@ public class NodeCreator {
                 index++;
             }
         }
+
+        // a process to format the tokens accordingly
+        // removing the sub (expressions) and replacing it with
+        // a SimpleToken with a label Node to indicate that a sub node
+
         final ArrayList<Token> tokensFormatted = new ArrayList<>();
         String[] operationSeparator = null;
 
@@ -48,6 +76,9 @@ public class NodeCreator {
                 continue;
             }
             final String tokenValue = value.toString();
+
+            // check if the token's value is a method call
+
             if (previousToken != null && previousToken.getLabel() == Label.SYMBOL
                     && token.getLabel() != Label.OPERATOR) {
                 if (!isMethod(valueOf(previousToken.getValue()), methods)) {
@@ -66,6 +97,10 @@ public class NodeCreator {
             }
             previousToken = token;
         }
+
+        // check if all the braces are closed
+        // and are not missing
+
         if (openBraces != 0) {
             throw new Exception("Missing one or more right or left parenthesis");
         }
@@ -74,6 +109,10 @@ public class NodeCreator {
             tokensFormatted.add(0, Data.emptyToken);
             tokensFormatted.add(1, Data.plusToken);
         }
+
+        // creates the node tree with the formatted tokens
+        // and indexes of the sub nodes (blocks)
+
         Operator lastEnum = null;
         Object lastValObj = null;
 
@@ -111,6 +150,10 @@ public class NodeCreator {
         return separators ? new Object[] {
                 headNode, operationSeparator } : headNode;
     }
+
+    /**
+     * @return the values for all the tokens
+     */
 
     private static String[] generate(ArrayList<Token> formatted) {
         final String[] tokens = new String[formatted.size()];
