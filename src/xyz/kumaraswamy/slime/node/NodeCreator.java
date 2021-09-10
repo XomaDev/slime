@@ -40,7 +40,7 @@ public class NodeCreator {
         // the program will itself recall to create a
         // sub node tree
 
-        final ArrayList<ArrayList<Token>> blocks = new ArrayList<>();
+        final ArrayList<Token[]> blocks = new ArrayList<>();
 
         int openBraces = 0, index = 1, i = 0;
         for (final Token o : tokens) {
@@ -49,10 +49,9 @@ public class NodeCreator {
             if (value != null) {
                 if (value.equals("(") && ++openBraces == 1) {
                     indexL.add(index);
-                }
-                else if (value.equals(")") && --openBraces == 0) {
+                } else if (value.equals(")") && --openBraces == 0) {
                     indexR.add(index);
-                    blocks.add(new ArrayList<>(Arrays.asList(Arrays.copyOfRange(
+                    blocks.add(((Arrays.copyOfRange(
                             tokens, indexL.get(i), indexR.get(i++) - 1))));
                 }
                 index++;
@@ -136,8 +135,7 @@ public class NodeCreator {
                                     : headNode
                     ).setRight(
                             isBlock
-                                    ? (Node) createNode(blocks.get(blockIndex++).toArray(
-                                            new Token[0]), false, methods)
+                                    ? (Node) createNode(blocks.get(blockIndex++), false, methods)
                                     : new SimpleNode(value)
                     );
                 } else if (pos == tokensFormatted.size() && headNode == null) {

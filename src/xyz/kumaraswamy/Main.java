@@ -24,7 +24,9 @@ public class Main {
         while (true) {
             System.out.print("»» ");
             final String text = scanner.nextLine();
+            long nano = System.nanoTime();
             slime.exec(text);
+            System.out.println(((System.nanoTime() - nano) / 1E6) + "ms");
         }
     }
 }
