@@ -78,21 +78,8 @@ and then do change accordingly, an example:
 
 ```java
 class MyMethods extends SlimeMethods {
-    private final StringJoiner joiner = new StringJoiner("\n");
-
-    @Override
-    public void print(final Object text) {
-        joiner.add(String.valueOf(text));
-    }
-
-    @SuppressWarnings({"unused"})
-    public void format(final Object text) {
-        System.out.println(String.valueOf(text).translateEscapes());
-    }
-
-    @Override
-    public String toString() {
-        return joiner.toString();
+    public void trim(final Object text) {
+        System.out.println(String.valueOf(text).trim());
     }
 }
 ```
