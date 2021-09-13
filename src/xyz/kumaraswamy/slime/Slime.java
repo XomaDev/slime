@@ -68,12 +68,12 @@ public class Slime {
 
     private void init() throws Exception {
         // the PI value
-        space.define("pi", valueOf(Math.PI));
+        defineConstant("PI", valueOf(Math.PI));
 
         // define variables as conditions
         // they will print themselves while in use
-        space.define("true", "true");
-        space.define("false", "false");
+        defineConstant("true", "true");
+        defineConstant("false", "false");
     }
 
     /**
@@ -159,6 +159,17 @@ public class Slime {
 
     public SlimeMethods getMethod() {
         return methods;
+    }
+
+    /**
+     * Defines the unchangeable constant variable
+     * that never changes
+     * @param name The name of/for the constant value
+     * @param value The constant value, should not be an expression
+     */
+
+    public void defineConstant(final String name, final String value) throws Exception {
+        space.define(name, value);
     }
 
     /**
