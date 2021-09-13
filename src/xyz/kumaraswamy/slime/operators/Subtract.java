@@ -3,6 +3,7 @@ package xyz.kumaraswamy.slime.operators;
 
 import static java.lang.Double.parseDouble;
 import static java.lang.String.valueOf;
+import static xyz.kumaraswamy.slime.Help.assertNums;
 
 /**
  * class for the arithmetic operator '-'

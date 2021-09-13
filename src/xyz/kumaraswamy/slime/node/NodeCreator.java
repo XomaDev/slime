@@ -33,6 +33,10 @@ public class NodeCreator {
     public static Object createNode(Token[] tokens, boolean separators, SlimeMethods methods) throws Exception {
         // marks the indexes for the sub expressions (blocks)
 
+        if (tokens == null) {
+            return null;
+        }
+
         final ArrayList<Integer> indexL = new ArrayList<>(),
                 indexR = new ArrayList<>();
 

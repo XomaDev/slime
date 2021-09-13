@@ -1,8 +1,11 @@
 package xyz.kumaraswamy.slime;
 
+import xyz.kumaraswamy.slime.functions.Function;
 import xyz.kumaraswamy.slime.operators.Operator;
 import xyz.kumaraswamy.slime.node.Node;
+import xyz.kumaraswamy.slime.parse.block.Block;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 import static java.lang.Double.parseDouble;
@@ -16,10 +19,12 @@ public class Processor {
     // operators are declared here
 
     private final HashMap<String, Operator> operators;
+    private final HashMap<String, Function> functions;
 
-    public Processor(final Space space, final HashMap<String, Operator> operators) {
+    public Processor(Space space, HashMap<String, Operator> operators, HashMap<String, Function> functions) {
         this.space = space;
         this.operators = operators;
+        this.functions = functions;
     }
 
     /**
@@ -55,7 +60,7 @@ public class Processor {
         // so, check if it's a string or a variable
         // accordingly
 
-        Object result = null;
+        Object result;
         final Object value =
                 head == null ? node.getValue() : head.getValue();
 
@@ -66,6 +71,10 @@ public class Processor {
             result = (object != null) ? object : space.get(cast);
         } else if (value instanceof Double) {
             result = value;
+        } else if (value instanceof Block) {
+            result = handleFunction((Block) value);
+        } else {
+            throw new IllegalArgumentException();
         }
 
         // do a reverse loop till [len] times
@@ -91,7 +100,7 @@ public class Processor {
             }
 
             final Object object = rightNode.getValue();
-            final Object right =
+            Object right =
                     object instanceof Double
                             ? (double) object
                             : process(rightNode);
@@ -113,11 +122,42 @@ public class Processor {
             }
 
             // calls the handle(Object, Object) method on
-            // the extended class of operators/Operator.class
+            // the extended class of operators/Operator.class\
+
+            if (result instanceof Block) {
+                result = handleFunction((Block) result);
+            }
+            if (right instanceof Block) {
+                right = handleFunction((Block) right);
+            }
 
             result = operator.handle(result, right);
         }
+        if (result instanceof Block) {
+            result = handleFunction((Block) result);
+        }
         return result;
+    }
+
+    /**
+     * Handles the function (Block.class)
+     * if any function needs to be called during
+     * the execution time
+     * @return The handled result
+     */
+
+    private Object handleFunction(Block block) throws Exception {
+        final String name = block.getName();
+        final Function function = functions.get(name);
+
+        if (function == null) {
+            throw new Exception("Cannot find symbol '" + name + "'");
+        }
+        final ArrayList<Object> parms = new ArrayList<>();
+        for (Node node : block.getNodes()) {
+            parms.add(process(node));
+        }
+        return function.handle(parms);
     }
 
     /**

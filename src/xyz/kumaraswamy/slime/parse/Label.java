@@ -6,5 +6,5 @@ package xyz.kumaraswamy.slime.parse;
  */
 
 public enum Label {
-    SYMBOL, STRING, NUMBER, OPERATOR, NODE
+    SYMBOL, STRING, NUMBER, OPERATOR, METHOD, NODE, COMMA
 }

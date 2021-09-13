@@ -1,9 +1,11 @@
 package xyz.kumaraswamy.slime;
 
+import xyz.kumaraswamy.slime.functions.Function;
 import xyz.kumaraswamy.slime.operators.Operator;
 import xyz.kumaraswamy.slime.lex.Lex;
 import xyz.kumaraswamy.slime.node.Node;
 import xyz.kumaraswamy.slime.node.NodeCreator;
+import xyz.kumaraswamy.slime.parse.block.BlockParser;
 import xyz.kumaraswamy.slime.parse.Parse;
 import xyz.kumaraswamy.slime.parse.Token;
 
@@ -36,6 +38,13 @@ public class Slime {
 
     private HashMap<String, Operator> operators = Data.operators;
 
+    /**
+     * A map to define and remove functions dynamically
+     * `Data.functions` returns the default set of functions
+     */
+
+    private final HashMap<String, Function> functions = Data.functions;
+
     public Slime(final Space space) throws Exception {
         this.space = space;
         init();
@@ -58,13 +67,13 @@ public class Slime {
      */
 
     private void init() throws Exception {
-        // the PIE value
-        define("pie", valueOf(Math.PI));
+        // the PI value
+        space.define("pi", valueOf(Math.PI));
 
         // define variables as conditions
         // they will print themselves while in use
-        define("true", "'true'");
-        define("false", "'false'");
+        space.define("true", "true");
+        space.define("false", "false");
     }
 
     /**
@@ -118,6 +127,41 @@ public class Slime {
     }
 
     /**
+     * Checks if @parm name is a valid
+     * existing function name
+     * @param name The name to check on
+     * @return if @parm name is a function name
+     */
+
+    public boolean isFunctionName(final String name) {
+        return name != null && functions.containsKey(name);
+    }
+
+    /**
+     * Dynamically defines a function
+     * @param name The name of the function
+     * @param function The @link Function.class argument.
+     *                 A class should be extended it, and handle(ArrayList<Object> parms)
+     *                 will be called on it.
+     */
+
+    public void defineFunction(final String name, Function function) {
+        functions.put(name, function);
+    }
+
+    /**
+     * @return Defined function
+     */
+
+    public HashMap<String, Function> getFunctions() {
+        return functions;
+    }
+
+    public SlimeMethods getMethod() {
+        return methods;
+    }
+
+    /**
      * Defines the variable with the Evaluated result
      * of the @parm expression
      *
@@ -131,7 +175,7 @@ public class Slime {
         if (!Lex.alphabets(name)) {
             throw new Exception("Name should only contain a-zA-Z characters in range");
         }
-        final Object[] results = processObjects(expression);
+        final Object[] results = processObjects(expression, true);
 
         if (results == null)
             return;
@@ -144,7 +188,19 @@ public class Slime {
         if (result == null)
             return;
 
-        space.add(name, result);
+        space.add(name, result, this);
+    }
+
+    /**
+     * The same as the method exec(String), but
+     * the parsing is done with the @link BlockParser.class
+     * that provides additional functionality to parse function
+     * calls
+     * @param text The text to be executed
+     */
+
+    public void execBlock(final String text) throws Exception {
+        exec(text, false);
     }
 
     /**
@@ -155,7 +211,11 @@ public class Slime {
      */
 
     public void exec(final String text) throws Exception {
-        final Object[] results = processObjects(text);
+        exec(text, true);
+    }
+
+    public void exec(final String text, boolean useRegularParse) throws Exception {
+        final Object[] results = processObjects(text, useRegularParse);
 
         if (results == null) {
             return;
@@ -183,7 +243,7 @@ public class Slime {
 
             // check if the name is valid
             if (Lex.alphabets(names[0])) {
-                space.add(name, result);
+                space.add(name, result, this);
                 return;
             }
         } else if (len == 1) {
@@ -197,17 +257,23 @@ public class Slime {
     /**
      * Tokenizes the text, labels the tokens and
      * creates a node tree out of it
+     * @param regularParse if to parse the tokens with the
+     *                     normal @link Parse.class,
+     *                     for the methods calls, its false,
+     *                     and we use the BlockParser.class
      * @throws Exception Something went wrong while processing
      */
 
-    private Object[] processObjects(String text) throws Exception {
+    private Object[] processObjects(String text, boolean regularParse) throws Exception {
         final String[] lexed = new Lex(text, this).lex();
 
         if (lexed.length == 0) {
             return null;
         }
 
-        final Token[] tokens = Parse.parse(lexed, this);
+        final Token[] tokens = regularParse
+                ? Parse.parse(lexed, this)
+                : new BlockParser().parse(lexed, this);
 
         if (methods == null) {
             methods = new SlimeMethods();
@@ -217,7 +283,7 @@ public class Slime {
                 tokens, true, methods);
 
         if (processor == null) {
-            processor = new Processor(space, operators);
+            processor = new Processor(space, operators, functions);
         }
         return results;
     }

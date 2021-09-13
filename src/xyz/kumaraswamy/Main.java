@@ -7,9 +7,7 @@ import xyz.kumaraswamy.slime.operators.Operator;
 
 import java.util.Scanner;
 
-@SuppressWarnings("InfiniteLoopStatement")
 public class Main {
-
     public static void main(String[] args) throws Exception {
         final Scanner scanner = new Scanner(System.in);
         final Slime slime = new Slime(new Space());
@@ -24,8 +22,11 @@ public class Main {
         while (true) {
             System.out.print("»» ");
             final String text = scanner.nextLine();
+            if (text.equals("end")) {
+                break;
+            }
             long nano = System.nanoTime();
-            slime.exec(text);
+            slime.execBlock(text);
             System.out.println(((System.nanoTime() - nano) / 1E6) + "ms");
         }
     }

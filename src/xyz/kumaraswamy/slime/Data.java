@@ -1,5 +1,8 @@
 package xyz.kumaraswamy.slime;
 
+import xyz.kumaraswamy.slime.functions.Function;
+import xyz.kumaraswamy.slime.functions.Max;
+import xyz.kumaraswamy.slime.functions.Min;
 import xyz.kumaraswamy.slime.parse.Label;
 import xyz.kumaraswamy.slime.parse.Operator;
 import xyz.kumaraswamy.slime.parse.Token;
@@ -22,6 +25,9 @@ public class Data {
      */
 
     public static boolean isMethod(final String object, SlimeMethods methods) {
+        if (methods == null) {
+            return false;
+        }
         for (Method method : methods.getClass().getMethods()) {
             if (object.equals(method.getName())) {
                 return true;
@@ -33,6 +39,7 @@ public class Data {
     // Initialize the Map with the default operators
 
     public static final HashMap<String, xyz.kumaraswamy.slime.operators.Operator> operators = new HashMap<>();
+    public static final HashMap<String, Function> functions = new HashMap<>();
 
     static {
         final Object[][] operatorMaps = new Object[][] {
@@ -43,6 +50,9 @@ public class Data {
 
                 new Object[] {"^", new Power()},
 
+                new Object[] {">", new GreaterThan()},
+                new Object[] {"<", new LesserThan()},
+
                 new Object[] {"is", new Is()},
                 new Object[] {"or", new Or()}
         };
@@ -51,6 +61,16 @@ public class Data {
             // put them to the Map
             operators.put((String) operator[0],
                     (xyz.kumaraswamy.slime.operators.Operator) operator[1]);
+        }
+
+        final Object[][] functionsMap = new Object[][] {
+                new Object[] {"max", new Max()},
+                new Object[] {"min", new Min()}
+        };
+
+        for (Object[] function : functionsMap) {
+            // put them to the Map
+            functions.put((String) function[0], (Function) function[1]);
         }
     }
 }
