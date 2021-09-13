@@ -1,5 +1,8 @@
 package xyz.kumaraswamy.slime.operators;
 
+import static xyz.kumaraswamy.slime.Help.asNum;
+import static xyz.kumaraswamy.slime.Help.assertNums;
+
 /**
  * class for arithmetic operator '/'
  */

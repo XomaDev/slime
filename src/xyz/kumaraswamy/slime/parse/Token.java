@@ -1,5 +1,7 @@
 package xyz.kumaraswamy.slime.parse;
 
+import java.util.Arrays;
+
 /**
  * A class to store the value and
  * the token type, created in Parser class
@@ -23,10 +25,16 @@ public class Token {
         return label;
     }
 
+    private String valueAsString() {
+        return value instanceof Object[]
+                ? Arrays.toString((Object[]) value)
+                : value + "";
+    }
+
     @Override
     public String toString() {
         return "[" +
-                "value=" + value +
+                "value=" + valueAsString() +
                 ", label=" + label +
                 ']';
     }

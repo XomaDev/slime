@@ -1,6 +1,7 @@
 package xyz.kumaraswamy.slime.operators;
 
 import static java.lang.String.valueOf;
+import static xyz.kumaraswamy.slime.Help.asNum;
 import static xyz.kumaraswamy.slime.Help.format;
 import static xyz.kumaraswamy.slime.Processor.areNums;
 

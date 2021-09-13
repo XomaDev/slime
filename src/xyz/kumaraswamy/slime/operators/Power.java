@@ -2,6 +2,9 @@ package xyz.kumaraswamy.slime.operators;
 
 // class for the power operator '^'
 
+import static xyz.kumaraswamy.slime.Help.asNum;
+import static xyz.kumaraswamy.slime.Help.assertNums;
+
 public class Power extends Operator {
 
     /**

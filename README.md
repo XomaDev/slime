@@ -97,10 +97,11 @@ final Slime slime = new Slime(space, new MyMethods());
 
 ### Define
 
-You can also define variable with your own values with slime, you just need to call `define(name, expression)`
+You can also define variable with your own values with slime, you just need to call `define(name, expression)` or `define(name, value)` to define a constant.
 
 ```java
 slime.define("pie", valueOf(Math.PI));
+slime.defineConstant("cakes", "50")
 ```
 
 <hr>
@@ -123,6 +124,64 @@ slime.setOperator("is", new Operator() {
 
 slime.exec("a = (70 + (10 + 20)) is 100")
 slime.exec("print a"); // prints true
+```
+<hr>
+
+### Function
+
+Yeah! You can also add functions!<br>
+There are two inbuilt functions named `max` and `min`.<br>
+To access this feature, you will have to use `execBlock` as replacement for `exec` command method. 
+
+```java
+// creates a variable named cakeName 
+// with the value 'Chocolate Cake!'
+
+slime.execBlock("cakeName = 'Chocolate Cake!'");
+
+// prints 'CHOCOLATE CAKE!'
+slime.execBlock("print case(cakeName, 'upper')");
+
+// prints 'chocolate cake!'
+slime.execBlock("print case(cakeName, 'lower')");
+
+// find the max and  in the args provided
+        
+// prints the number 7     
+slime.execBlock("print max(PI, 7)");
+
+// prints the number 1
+
+slime.execBlock("print min(PI, 7, 1)")
+```
+
+A complicated example to define a function with by calling the method `defineFunction(MethodName, Function)` on Slime object.
+
+```java
+slime.defineFunction("case", new Function() {
+            @Override
+            public Object handle(ArrayList<Object> parms) {
+                if (parms.size() != 2) {
+                    throw new IllegalArgumentException("Expected only two parameter!");
+                }
+                final String value = parms.get(0) + "", toCase = parms.get(1) + "";
+                final boolean toLowerCase;
+
+                if (toCase.equals("true") || toCase.equals("false")) {
+                    toLowerCase = toCase.equals("true");
+                } else if (toCase.equalsIgnoreCase("lower")) {
+                    toLowerCase = true;
+                } else if (toCase.equalsIgnoreCase("upper")) {
+                    toLowerCase = false;
+                } else {
+                    throw new IllegalArgumentException("Not a valid argument '" + toCase + "'");
+                }
+
+                return toLowerCase
+                        ? value.toLowerCase()
+                        : value.toUpperCase();
+            }
+        });
 ```
 <hr>
 This was made to learn.
