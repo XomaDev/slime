@@ -158,30 +158,19 @@ slime.execBlock("print min(PI, 7, 1)")
 A complicated example to define a function with by calling the method `defineFunction(MethodName, Function)` on Slime object.
 
 ```java
-slime.defineFunction("case", new Function() {
-            @Override
-            public Object handle(ArrayList<Object> parms) {
-                if (parms.size() != 2) {
-                    throw new IllegalArgumentException("Expected only two parameter!");
-                }
-                final String value = parms.get(0) + "", toCase = parms.get(1) + "";
-                final boolean toLowerCase;
-
-                if (toCase.equals("true") || toCase.equals("false")) {
-                    toLowerCase = toCase.equals("true");
-                } else if (toCase.equalsIgnoreCase("lower")) {
-                    toLowerCase = true;
-                } else if (toCase.equalsIgnoreCase("upper")) {
-                    toLowerCase = false;
-                } else {
+defineFunction("case", new Function() {
+                @Override
+                public Object handle(ArrayList<Object> parms) {
+                    if (parms.size() != 2)
+                        throw new IllegalArgumentException("Expected only two parameter!");
+                    final Object toCase = parms.get(1);
+                    if (toCase == "true" || toCase.equals("lower"))
+                        return valueOf(parms.get(0)).toLowerCase();
+                    else if (toCase == "false" || toCase.equals("upper"))
+                        return valueOf(parms.get(0)).toUpperCase();
                     throw new IllegalArgumentException("Not a valid argument '" + toCase + "'");
                 }
-
-                return toLowerCase
-                        ? value.toLowerCase()
-                        : value.toUpperCase();
-            }
-        });
+            });
 ```
 <hr>
 This was made to learn.
