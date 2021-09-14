@@ -9,46 +9,36 @@ import xyz.kumaraswamy.slime.operators.Operator;
 import java.util.ArrayList;
 import java.util.Scanner;
 
-import static java.lang.Boolean.parseBoolean;
+import static java.lang.String.valueOf;
 
 public class Main {
     public static void main(String[] args) throws Exception {
         final Scanner scanner = new Scanner(System.in);
-        final Slime slime = new Slime(new Space());
 
-        slime.defineConstant("cakes", "50");
-
-        slime.setOperator("?", new Operator() {
-            @Override
-            public Object handle(Object first, Object second) {
-                return new Is().handle(first, second);
-            }
-        });
-
-        slime.defineFunction("case", new Function() {
-            @Override
-            public Object handle(ArrayList<Object> parms) {
-                if (parms.size() != 2) {
-                    throw new IllegalArgumentException("Expected only two parameter!");
-                }
-                final String value = parms.get(0) + "", toCase = parms.get(1) + "";
-                final boolean toLowerCase;
-
-                if (toCase.equals("true") || toCase.equals("false")) {
-                    toLowerCase = toCase.equals("true");
-                } else if (toCase.equalsIgnoreCase("lower")) {
-                    toLowerCase = true;
-                } else if (toCase.equalsIgnoreCase("upper")) {
-                    toLowerCase = false;
-                } else {
+        final Slime slime = new Slime(new Space()) {{
+            defineFunction("case", new Function() {
+                @Override
+                public Object handle(ArrayList<Object> parms) {
+                    if (parms.size() != 2)
+                        throw new IllegalArgumentException("Expected only two parameter!");
+                    final Object toCase = parms.get(1);
+                    if (toCase == "true" || toCase.equals("lower"))
+                        return valueOf(parms.get(0)).toLowerCase();
+                    else if (toCase == "false" || toCase.equals("upper"))
+                        return valueOf(parms.get(0)).toUpperCase();
                     throw new IllegalArgumentException("Not a valid argument '" + toCase + "'");
                 }
+            });
 
-                return toLowerCase
-                        ? value.toLowerCase()
-                        : value.toUpperCase();
-            }
-        });
+            defineConstant("cakes", "50");
+
+            setOperator("?", new Operator() {
+                @Override
+                public Object handle(Object first, Object second) {
+                    return new Is().handle(first, second);
+                }
+            });
+        }};
 
         while (true) {
             System.out.print("»» ");
