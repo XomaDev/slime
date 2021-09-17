@@ -1,15 +1,12 @@
 package xyz.kumaraswamy.slime;
 
 import xyz.kumaraswamy.slime.functions.Function;
-import xyz.kumaraswamy.slime.operators.Operator;
 import xyz.kumaraswamy.slime.node.Node;
+import xyz.kumaraswamy.slime.operators.Operator;
 import xyz.kumaraswamy.slime.parse.block.Block;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-
-import static java.lang.Double.parseDouble;
-import static java.lang.String.valueOf;
 
 public class Processor {
 
@@ -158,26 +155,5 @@ public class Processor {
             parms.add(process(node));
         }
         return function.handle(parms);
-    }
-
-    /**
-     * Checks if two numbers can be used as numbers
-     * this is used to auto cast objects
-     */
-
-    public static boolean areNums(Object first, Object second) {
-        if (first instanceof Double
-                && second instanceof Double) {
-            return true;
-        }
-        try {
-            // try parsing the two objects to number
-            parseDouble(valueOf(first));
-            parseDouble(valueOf(second));
-        } catch (NumberFormatException ignored) {
-            // just ignore the exception
-            return false;
-        }
-        return true;
     }
 }

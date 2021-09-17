@@ -1,7 +1,5 @@
 package xyz.kumaraswamy.slime.operators;
 
-import static xyz.kumaraswamy.slime.Processor.areNums;
-
 /**
  * Class to declare an operator.
  * handle(Object, Object) will be called on

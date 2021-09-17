@@ -4,7 +4,6 @@ import xyz.kumaraswamy.slime.Data;
 import xyz.kumaraswamy.slime.SlimeMethods;
 import xyz.kumaraswamy.slime.parse.Label;
 import java.util.ArrayList;
-import java.util.Arrays;
 
 import xyz.kumaraswamy.slime.parse.Operator;
 import xyz.kumaraswamy.slime.parse.SimpleToken;
@@ -37,29 +36,42 @@ public class NodeCreator {
             return null;
         }
 
-        final ArrayList<Integer> indexL = new ArrayList<>(),
-                indexR = new ArrayList<>();
-
         // store the sub expressions (blocks)
         // the program will itself recall to create a
         // sub node tree
 
         final ArrayList<Token[]> blocks = new ArrayList<>();
 
-        int openBraces = 0, index = 1, i = 0;
+        int openBraces = 0, index = 1;
+        Object i = null;
+
+        final ArrayList<Token> tokens1 = new ArrayList<>();
+
+        boolean inside = false;
         for (final Token o : tokens) {
             final Object value = o.getValue().toString();
 
-            if (value != null) {
-                if (value.equals("(") && ++openBraces == 1) {
-                    indexL.add(index);
-                } else if (value.equals(")") && --openBraces == 0) {
-                    indexR.add(index);
-                    blocks.add(((Arrays.copyOfRange(
-                            tokens, indexL.get(i), indexR.get(i++) - 1))));
-                }
-                index++;
+            if (value == null) {
+                continue;
             }
+
+            if (value.equals("(") && ++openBraces == 1) {
+                i = index;
+                inside = true;
+                continue;
+            } else if (value.equals(")") && --openBraces == 0) {
+                if (i == null) {
+                    throw new Exception();
+                }
+                blocks.add(tokens1.toArray(new Token[0]));
+                tokens1.clear();
+                inside = false;
+                continue;
+            }
+            if (inside) {
+                tokens1.add(o);
+            }
+            index++;
         }
 
         // a process to format the tokens accordingly
@@ -83,10 +95,8 @@ public class NodeCreator {
             // check if the token's value is a method call
 
             if (previousToken != null && previousToken.getLabel() == Label.SYMBOL
-                    && token.getLabel() != Label.OPERATOR) {
-                if (!isMethod(valueOf(previousToken.getValue()), methods)) {
-                    throw new Exception("Cannot find symbol '" + previousToken.getValue() + "'");
-                }
+                    && token.getLabel() != Label.OPERATOR && !isMethod(valueOf(previousToken.getValue()), methods)) {
+                throw new Exception("Cannot find symbol '" + previousToken.getValue() + "'");
             }
             if (tokenValue.equals("=") || isMethod(tokenValue, methods)) {
                 tokensFormatted.add(token);
@@ -142,12 +152,17 @@ public class NodeCreator {
                                     ? (Node) createNode(blocks.get(blockIndex++), false, methods)
                                     : new SimpleNode(value)
                     );
-                } else if (pos == tokensFormatted.size() && headNode == null) {
-                    headNode = new SimpleNode(value);
                 }
                 lastValObj = value;
             }
             pos++;
+        }
+
+        // there is only one operator,
+        // so we give it as a simple node
+
+        if (headNode == null && lastValObj != null && pos - 1 == tokensFormatted.size()) {
+            headNode = new SimpleNode(lastValObj);
         }
         return separators ? new Object[] {
                 headNode, operationSeparator } : headNode;

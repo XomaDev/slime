@@ -46,12 +46,12 @@ public class Block {
         List<Token> elements = new ArrayList<>();
 
         for (Token token : tokens) {
-            if (!elements.isEmpty() && token.getLabel() == Label.COMMA) {
-                result.add(elements);
-                elements = new ArrayList<>();
-            } else {
+            if (elements.isEmpty() || token.getLabel() != Label.COMMA) {
                 elements.add(token);
+                continue;
             }
+            result.add(elements);
+            elements = new ArrayList<>();
         }
 
         // add the existing elements
@@ -66,9 +66,8 @@ public class Block {
         final Node[] nodes = new Node[result.size()];
 
         for (int i = 0; i < result.size(); i++) {
-            final Node node = (Node) NodeCreator.createNode(result.get(i).toArray(new Token[0]),
+            nodes[i] = (Node) NodeCreator.createNode(result.get(i).toArray(new Token[0]),
                     false, slime.getMethod());
-            nodes[i] = node;
         }
         this.nodes = nodes;
     }

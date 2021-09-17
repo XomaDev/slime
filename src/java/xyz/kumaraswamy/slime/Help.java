@@ -4,8 +4,8 @@ import xyz.kumaraswamy.slime.lex.Lex;
 
 import java.text.DecimalFormat;
 
+import static java.lang.Double.parseDouble;
 import static java.lang.String.valueOf;
-import static xyz.kumaraswamy.slime.Processor.areNums;
 
 public class Help {
 
@@ -74,5 +74,26 @@ public class Help {
             return;
         }
         throw new Exception("Cannot perform this operation, invalid type of arguments provided!");
+    }
+
+    /**
+     * Checks if two numbers can be used as numbers
+     * this is used to auto cast objects
+     */
+
+    public static boolean areNums(Object first, Object second) {
+        if (first instanceof Double
+                && second instanceof Double) {
+            return true;
+        }
+        try {
+            // try parsing the two objects to number
+            parseDouble(valueOf(first));
+            parseDouble(valueOf(second));
+        } catch (NumberFormatException ignored) {
+            // just ignore the exception
+            return false;
+        }
+        return true;
     }
 }
