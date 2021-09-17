@@ -1,5 +1,3 @@
-package xyz.kumaraswamy;
-
 import xyz.kumaraswamy.slime.Slime;
 import xyz.kumaraswamy.slime.Space;
 import xyz.kumaraswamy.slime.functions.Function;
@@ -39,7 +37,6 @@ public class Main {
                 }
             });
         }};
-
         while (true) {
             System.out.print("»» ");
             final String text = scanner.nextLine();

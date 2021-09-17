@@ -248,15 +248,8 @@ public class Slime {
 
         if (len == 2 && names[1].equals("=") && Lex.alphabets(names[0])) {
             // a statement to assign a variable
-
-            // name of the variable
-            final String name = names[0];
-
-            // check if the name is valid
-            if (Lex.alphabets(names[0])) {
-                space.add(name, result, this);
-                return;
-            }
+            space.add(names[0], result, this);
+            return;
         } else if (len == 1) {
             // it is a method call
             invoke(names[0], result);

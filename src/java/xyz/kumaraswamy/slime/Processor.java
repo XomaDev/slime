@@ -1,15 +1,12 @@
 package xyz.kumaraswamy.slime;
 
 import xyz.kumaraswamy.slime.functions.Function;
-import xyz.kumaraswamy.slime.operators.Operator;
 import xyz.kumaraswamy.slime.node.Node;
+import xyz.kumaraswamy.slime.operators.Operator;
 import xyz.kumaraswamy.slime.parse.block.Block;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-
-import static java.lang.Double.parseDouble;
-import static java.lang.String.valueOf;
 
 public class Processor {
 
@@ -62,17 +59,17 @@ public class Processor {
 
         Object result;
         final Object value =
-                head == null ? node.getValue() : head.getValue();
+                head == null
+                        ? node.getValue()
+                        : head.getValue();
 
         if (value instanceof String) {
             final String cast = (String) value;
             final Object object = Help.isValue(cast);
 
             result = (object != null) ? object : space.get(cast);
-        } else if (value instanceof Double) {
-            result = value;
-        } else if (value instanceof Block) {
-            result = handleFunction((Block) value);
+        } else if (value instanceof Double || value instanceof Block) {
+            result = checkAndHandle(value);
         } else {
             throw new IllegalArgumentException();
         }
@@ -124,19 +121,24 @@ public class Processor {
             // calls the handle(Object, Object) method on
             // the extended class of operators/Operator.class\
 
-            if (result instanceof Block) {
-                result = handleFunction((Block) result);
-            }
-            if (right instanceof Block) {
-                right = handleFunction((Block) right);
-            }
+            result = operator.handle(checkAndHandle(result),
+                    checkAndHandle(right));
+        }
+        return checkAndHandle(result);
+    }
 
-            result = operator.handle(result, right);
+    /**
+     * Checks if the object is a Block and handles
+     * accordingly
+     * @param object The parm to handle
+     * @return Handled parm
+     */
+
+    private Object checkAndHandle(final Object object) throws Exception {
+        if (object instanceof Block) {
+            return handleFunction((Block) object);
         }
-        if (result instanceof Block) {
-            result = handleFunction((Block) result);
-        }
-        return result;
+        return object;
     }
 
     /**
@@ -158,26 +160,5 @@ public class Processor {
             parms.add(process(node));
         }
         return function.handle(parms);
-    }
-
-    /**
-     * Checks if two numbers can be used as numbers
-     * this is used to auto cast objects
-     */
-
-    public static boolean areNums(Object first, Object second) {
-        if (first instanceof Double
-                && second instanceof Double) {
-            return true;
-        }
-        try {
-            // try parsing the two objects to number
-            parseDouble(valueOf(first));
-            parseDouble(valueOf(second));
-        } catch (NumberFormatException ignored) {
-            // just ignore the exception
-            return false;
-        }
-        return true;
     }
 }

@@ -17,6 +17,10 @@ public class Divide extends Operator {
     @Override
     public Object handle(Object first, Object second) throws Exception {
         assertNums(first, second);
-        return asNum(first) / asNum(second);
+        final double firstNum = asNum(first), secondNum = asNum(second);
+        if (firstNum == 0.0 || secondNum == 0.0) {
+            throw new ArithmeticException("[exception] / by zero");
+        }
+        return firstNum / secondNum;
     }
 }

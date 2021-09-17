@@ -95,7 +95,8 @@ public class Lex {
     }
 
     public static boolean isDigits(final String token) {
-        if (token.length() == 1 && token.charAt(0) == '-') {
+        if (token.length() == 1 && (token.charAt(0) == '-' ||
+                token.charAt(0) == '.')) {
             return false;
         }
         boolean firstChar = false;

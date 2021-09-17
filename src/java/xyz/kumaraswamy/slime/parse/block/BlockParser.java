@@ -1,16 +1,10 @@
 package xyz.kumaraswamy.slime.parse.block;
 
 import xyz.kumaraswamy.slime.Slime;
-import xyz.kumaraswamy.slime.parse.Label;
-import xyz.kumaraswamy.slime.parse.Parse;
 import xyz.kumaraswamy.slime.parse.Token;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.LinkedList;
 import java.util.List;
-
-import static java.lang.String.valueOf;
 
 /**
  * a class same as the @link Parse.class
@@ -44,10 +38,12 @@ public class BlockParser {
         if (open != 0) {
             throw new IllegalArgumentException();
         }
-        final List<Integer> positionsR = new ArrayList<>(positions.size());
+        final int[] positionsR = new int[positions.size()];
         final List<List<String>> blocks = new ArrayList<>();
 
-        for (final int pos : positions) {
+        for (int j = 0; j < positions.size(); j++) {
+            int pos = positions.get(j);
+
             final List<String> elements = new ArrayList<>();
 
             for (int i = pos; i < tokens.length; i++) {
@@ -55,7 +51,7 @@ public class BlockParser {
                 if (element.equals("(") && ++open == 1) {
                     continue;
                 } else if (element.equals(")") && --open == 0) {
-                    positionsR.add(i);
+                    positionsR[j] = i;
                     break;
                 }
                 elements.add(element);
@@ -65,45 +61,29 @@ public class BlockParser {
             }
             blocks.add(elements);
         }
-        final List<Object> tokensNext = new ArrayList<>();
-
+        RecursiveParser recursiveParser = new RecursiveParser(slime, blocks, this);
         boolean isOpen = false;
 
         for (int i = 0; i < tokens.length; i++) {
             final String element = tokens[i];
             if (element.equals("(") && positions.contains(i)) {
-                tokensNext.add(new Indicator());
+                recursiveParser.put(new Indicator());
                 isOpen = true;
-            } else if (element.equals(")") && positionsR.contains(i)) {
+            } else if (element.equals(")") && contains(positionsR, i)) {
                 isOpen = false;
             } else if (!isOpen) {
-                tokensNext.add(element);
+                recursiveParser.put(element);
             }
         }
-        final LinkedList<Token> tokens1 = new LinkedList<>();
+        return recursiveParser.getTokens();
+    }
 
-        int blockElementGetPos = 0;
-        Object previousElement = null;
-
-        for (final Object element : tokensNext) {
-            if (element instanceof Indicator) {
-                final Token[] tokensElementz = parse(blocks.get(blockElementGetPos++).toArray(
-                        new String[0]), slime);
-
-                if (slime.isFunctionName(valueOf(previousElement))) {
-                    tokens1.removeLast();
-                    tokens1.add(new Token(new Block((String) previousElement,
-                            tokensElementz, slime), Label.METHOD));
-                } else {
-                    tokens1.add(new Token("(", Label.OPERATOR));
-                    tokens1.addAll(Arrays.asList(tokensElementz));
-                    tokens1.add(new Token(")", Label.OPERATOR));
-                }
-            } else {
-                tokens1.add(Parse.getToken((String) element, slime));
+    private boolean contains(int[] positionsR, int n) {
+        for (int pos : positionsR) {
+            if (pos == n) {
+                return true;
             }
-            previousElement = element;
         }
-        return tokens1.toArray(new Token[0]);
+        return false;
     }
 }
