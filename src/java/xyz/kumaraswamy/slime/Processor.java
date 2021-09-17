@@ -59,17 +59,17 @@ public class Processor {
 
         Object result;
         final Object value =
-                head == null ? node.getValue() : head.getValue();
+                head == null
+                        ? node.getValue()
+                        : head.getValue();
 
         if (value instanceof String) {
             final String cast = (String) value;
             final Object object = Help.isValue(cast);
 
             result = (object != null) ? object : space.get(cast);
-        } else if (value instanceof Double) {
-            result = value;
-        } else if (value instanceof Block) {
-            result = handleFunction((Block) value);
+        } else if (value instanceof Double || value instanceof Block) {
+            result = checkAndHandle(value);
         } else {
             throw new IllegalArgumentException();
         }
@@ -121,19 +121,24 @@ public class Processor {
             // calls the handle(Object, Object) method on
             // the extended class of operators/Operator.class\
 
-            if (result instanceof Block) {
-                result = handleFunction((Block) result);
-            }
-            if (right instanceof Block) {
-                right = handleFunction((Block) right);
-            }
+            result = operator.handle(checkAndHandle(result),
+                    checkAndHandle(right));
+        }
+        return checkAndHandle(result);
+    }
 
-            result = operator.handle(result, right);
+    /**
+     * Checks if the object is a Block and handles
+     * accordingly
+     * @param object The parm to handle
+     * @return Handled parm
+     */
+
+    private Object checkAndHandle(final Object object) throws Exception {
+        if (object instanceof Block) {
+            return handleFunction((Block) object);
         }
-        if (result instanceof Block) {
-            result = handleFunction((Block) result);
-        }
-        return result;
+        return object;
     }
 
     /**
