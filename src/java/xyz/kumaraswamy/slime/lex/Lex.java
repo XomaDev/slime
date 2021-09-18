@@ -56,9 +56,9 @@ public class Lex {
 
                 // an exception for negative and
                 // floating point numbers
-
-                if (previous.equals("-") && slime.isOperator(size == 0
-                        ? "" : tokens.get(size - 1))) {
+                final String previousL = size == 0
+                        ? "" : tokens.get(size - 1);
+                if (previous.equals("-") && (slime.isOperator(previousL) || alphabets(previousL))) {
                     tokens.set(size, "-" + ch);
                 } else if (isDigits(previous) && size != -1) {
                     // check if previous token was only digits
@@ -95,8 +95,7 @@ public class Lex {
     }
 
     public static boolean isDigits(final String token) {
-        if (token.length() == 1 && (token.charAt(0) == '-' ||
-                token.charAt(0) == '.')) {
+        if (token.length() == 1 && token.charAt(0) == '-') {
             return false;
         }
         boolean firstChar = false;
