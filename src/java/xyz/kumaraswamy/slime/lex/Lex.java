@@ -58,7 +58,8 @@ public class Lex {
                 // floating point numbers
                 final String previousL = size == 0
                         ? "" : tokens.get(size - 1);
-                if (previous.equals("-") && (slime.isOperator(previousL) || alphabets(previousL))) {
+                if (previous.equals("-") && (slime.isOperator(previousL)
+                        || alphabets(previousL) || isBlock(previousL))) {
                     tokens.set(size, "-" + ch);
                 } else if (isDigits(previous) && size != -1) {
                     // check if previous token was only digits
@@ -92,6 +93,13 @@ public class Lex {
         // in the StringBuilders
         appendTokens();
         return tokens.toArray(new String[0]);
+    }
+
+    private boolean isBlock(final String object) {
+        if (object.length() != 1) {
+            return false;
+        }
+        return isBlock(object.charAt(0));
     }
 
     public static boolean isDigits(final String token) {
